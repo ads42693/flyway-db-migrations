@@ -6,7 +6,7 @@ resources:
 
 namespace: flyway-dev
 
-patchesStrategicMerge:
+patches:
   - patches/env.yaml
 
 secretGenerator:
