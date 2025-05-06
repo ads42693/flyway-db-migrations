@@ -1,0 +1,47 @@
+name: Flyway DB Migration Validation
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+jobs:
+  validate:
+    name: Validate DB Migrations
+    runs-on: ubuntu-latest
+    
+    services:
+      postgres:
+        image: postgres:14-alpine
+        env:
+          POSTGRES_DB: mydatabase
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    
+    steps:
+      - name: Check out repository code
+        uses: actions/checkout@v3
+      
+      - name: Validate Flyway Migrations
+        uses: docker://flyway/flyway:9.20.0-alpine
+        with:
+          args: -url=jdbc:postgresql://postgres:5432/mydatabase -user=postgres -password=postgres -connectRetries=60 validate
+
+      - name: Run Flyway Info
+        uses: docker://flyway/flyway:9.20.0-alpine
+        with:
+          args: -url=jdbc:postgresql://postgres:5432/mydatabase -user=postgres -password=postgres info
+      
+      - name: Test Migrations
+        uses: docker://flyway/flyway:9.20.0-alpine
+        with:
+          args: -url=jdbc:postgresql://postgres:5432/mydatabase -user=postgres -password=postgres migrate

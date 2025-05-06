@@ -1,0 +1,48 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Rollout
+metadata:
+  name: flyway-migrations
+spec:
+  replicas: 1
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: flyway-migrations
+  template:
+    metadata:
+      labels:
+        app: flyway-migrations
+    spec:
+      containers:
+      - name: flyway
+        image: flyway-migrations:latest
+        imagePullPolicy: Always
+        env:
+        - name: FLYWAY_ENV
+          value: prod
+        - name: DB_URL
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: url
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: password
+        - name: DB_SCHEMA
+          valueFrom:
+            configMapKeyRef:
+              name: db-config
+              key: schema
+      restartPolicy: OnFailure
+  strategy:
+    blueGreen:
+      autoPromotionEnabled: false  # Requerimos aprobación manual
+      previewService: flyway-preview
+      activeService: flyway-active
