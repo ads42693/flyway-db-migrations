@@ -68,7 +68,7 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v3
 
-      # 1) Instalar kubectl y Minikube en el runner
+      # 1) Instalar kubectl y Minikube
       - name: Install kubectl & Minikube
         run: |
           # kubectl
@@ -82,21 +82,30 @@ jobs:
       - name: Start Minikube
         run: minikube start --driver=docker
 
-      # 3) Configurar Docker para usar el daemon de Minikube
+      # 3) Configurar Docker dentro de Minikube
       - name: Configure Docker to Minikube
-        run: |
-          eval $(minikube docker-env)
+        run: eval $(minikube docker-env)
 
-      # 4) Construir la imagen y cargarla en Minikube
+      # 4) Construir imagen Docker
       - name: Build Docker Image
         run: docker build -t flyway-migrations:local .
 
-      # 5) Verificar que kubectl se conecta al cluster
+      # 5) Instalar Argo Rollouts CRDs
+      - name: Install Argo Rollouts CRDs
+        run: |
+          kubectl apply -f https://github.com/argoproj/argo-rollouts/releases/latest/download/install.yaml
+
+      # 6) Crear el namespace (si ya existe, no falla)
+      - name: Ensure namespace flyway-dev
+        run: |
+          kubectl create namespace flyway-dev || echo "namespace flyway-dev already exists"
+
+      # 7) Verificar cluster
       - name: Validate kubectl context
         run: |
           kubectl cluster-info
           kubectl get nodes
 
-      # 6) Aplicar los manifests Kubernetes con Kustomize
+      # 8) Desplegar con Kustomize
       - name: Deploy to Minikube
         run: kubectl apply -k k8s/overlays/dev
