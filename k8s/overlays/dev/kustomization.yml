@@ -8,6 +8,7 @@ namespace: flyway-dev
 
 secretGenerator:
   - name: db-credentials
+    behavior: replace
     literals:
       - url=jdbc:postgresql://postgres-dev:5432/mydatabase
       - username=dev_user
