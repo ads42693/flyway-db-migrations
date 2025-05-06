@@ -6,9 +6,6 @@ resources:
 
 namespace: flyway-dev
 
-patches:
-  - path: patches/env.yaml
-
 secretGenerator:
   - name: db-credentials
     literals:
