@@ -41,7 +41,7 @@ spec:
             configMapKeyRef:
               name: db-config
               key: schema
-      restartPolicy: OnFailure
+      # restartPolicy: Always  <-- implícito, no hace falta
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -56,6 +56,6 @@ metadata:
   name: db-credentials
 type: Opaque
 data:
-  url: amRiYzpwb3N0Z3Jlc3FsOi8vcG9zdGdyZXMtc2VydmljZTo1NDMyL215ZGF0YWJhc2U=  # jdbc:postgresql://postgres-service:5432/mydatabase
-  username: cG9zdGdyZXM=  # postgres
-  password: Y2hhbmdlbWU=  # changeme
+  url: amRiYzpwb3N0Z3Jlc3FsOi8vcG9zdGdyZXMtc2VydmljZTo1NDMyL215ZGF0YWJhc2U=
+  username: cG9zdGdyZXM=
+  password: Y2hhbmdlbWU=

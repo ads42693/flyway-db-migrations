@@ -40,9 +40,9 @@ spec:
             configMapKeyRef:
               name: db-config
               key: schema
-      restartPolicy: OnFailure
+      # restartPolicy implícito Always
   strategy:
     blueGreen:
-      autoPromotionEnabled: false  # Requerimos aprobación manual
+      autoPromotionEnabled: false
       previewService: flyway-preview
       activeService: flyway-active
