@@ -18,6 +18,10 @@ jobs:
       - name: Check out repository code
         uses: actions/checkout@v3
 
+      - name: Start Minikube
+        run: |
+          minikube start --driver=docker
+
       - name: Build and Load Docker Image to Minikube
         run: |
           eval $(minikube docker-env)
