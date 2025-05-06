@@ -16,8 +16,8 @@ spec:
     spec:
       containers:
       - name: flyway
-        image: flyway-migrations:latest
-        imagePullPolicy: Always
+        image: flyway-migrations:local
+        imagePullPolicy: IfNotPresent
         env:
         - name: FLYWAY_ENV
           value: prod
