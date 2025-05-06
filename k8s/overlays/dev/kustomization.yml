@@ -10,6 +10,6 @@ secretGenerator:
   - name: db-credentials
     behavior: replace
     literals:
-      - url=jdbc:postgresql://postgres-dev:5432/mydatabase
+      - url=jdbc:postgresql://172.29.140.116:5432/mydatabase
       - username=dev_user
       - password=dev_password

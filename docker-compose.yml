@@ -21,6 +21,9 @@ services:
     build: .
     environment:
       FLYWAY_ENV: local
+      FLYWAY_URL: jdbc:postgresql://172.29.140.116:5432/mydatabase
+      FLYWAY_USER: dev_user
+      FLYWAY_PASSWORD: dev_password
     depends_on:
       db:
         condition: service_healthy
