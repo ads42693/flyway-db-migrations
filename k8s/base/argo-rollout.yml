@@ -1,48 +1,29 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Rollout
 metadata:
-  name: flyway-migrations
+  name: your-app-rollout
+  namespace: flyway-dev
 spec:
-  replicas: 1
-  revisionHistoryLimit: 3
+  replicas: 3
   selector:
     matchLabels:
-      app: flyway-migrations
+      app: your-app
   template:
     metadata:
       labels:
-        app: flyway-migrations
+        app: your-app
     spec:
       containers:
-      - name: flyway
-        image: flyway-migrations:latest
-        imagePullPolicy: Always
-        env:
-        - name: FLYWAY_ENV
-          value: prod
-        - name: DB_URL
-          valueFrom:
-            secretKeyRef:
-              name: db-credentials
-              key: url
-        - name: DB_USER
-          valueFrom:
-            secretKeyRef:
-              name: db-credentials
-              key: username
-        - name: DB_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: db-credentials
-              key: password
-        - name: DB_SCHEMA
-          valueFrom:
-            configMapKeyRef:
-              name: db-config
-              key: schema
-      # restartPolicy implícito Always
+        - name: your-app
+          image: your-app-image:latest
+          ports:
+            - containerPort: 8080
+          # aquí tus vars de conexión si la app las necesita
   strategy:
-    blueGreen:
-      autoPromotionEnabled: false
-      previewService: flyway-preview
-      activeService: flyway-active
+    canary:
+      steps:
+        - setWeight: 10
+        - pause: {duration: 10s}
+        - setWeight: 50
+        - pause: {duration: 10s}
+        - setWeight: 100

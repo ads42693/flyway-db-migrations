@@ -3,12 +3,13 @@ version: '3.8'
 services:
   db:
     image: postgres:14-alpine
+    container_name: postgres-db
     environment:
       POSTGRES_DB: mydatabase
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
@@ -17,25 +18,14 @@ services:
       timeout: 5s
       retries: 5
 
-  flyway:
-    build: .
-    environment:
-      FLYWAY_ENV: local
-      FLYWAY_URL: jdbc:postgresql://172.29.140.116:5432/mydatabase
-      FLYWAY_USER: dev_user
-      FLYWAY_PASSWORD: dev_password
-    depends_on:
-      db:
-        condition: service_healthy
-    command: migrate
-
   pgadmin:
-    image: dpage/pgadmin4:6.20
+    image: dpage/pgadmin4:latest
+    container_name: pgadmin
+    ports:
+      - "8080:80"
     environment:
       PGADMIN_DEFAULT_EMAIL: admin@example.com
       PGADMIN_DEFAULT_PASSWORD: admin
-    ports:
-      - "8080:80"
     depends_on:
       - db
 

@@ -1,16 +1,11 @@
-FROM flyway/flyway:9.20.0-alpine
+FROM flyway/flyway:11.8.1-alpine
 
-# Copiar archivos de configuración
-COPY config/ /flyway/conf/
+# Copia configuración base (opciones comunes)
+COPY config/flyway.conf /flyway/conf/flyway.conf
 
-# Copiar migraciones
+# Copia migraciones al lugar correcto
 COPY migrations/ /flyway/sql/
 
-# Establecer entorno por defecto (local, dev, prod)
-ENV FLYWAY_ENV=local
-
-# Punto de entrada modificado para cargar el archivo correcto según el entorno
-ENTRYPOINT ["sh", "-c", "flyway -configFiles=/flyway/conf/$FLYWAY_ENV.conf $*"]
-
-# Comando predeterminado
+# Entrypoint estándar de Flyway (usa flyway.conf para opciones base)
+ENTRYPOINT ["flyway", "-configFiles=/flyway/conf/flyway.conf"]
 CMD ["migrate"]
